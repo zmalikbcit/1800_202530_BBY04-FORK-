@@ -12,9 +12,9 @@ Developed for the COMP 1800 course, this project applies User-Centred Design pra
 ## Features
 
 - Track Pantry stock
-- track depleting inventory
-- reduce waste and fairly split grocery responsibilities
-  
+- Chat with group members
+- Show depleted items in a grocery list
+- Join multiple groups
 
 ---
 
@@ -32,10 +32,10 @@ Example:
 
 ## Usage
 
-1. Open your browser and visit `http://localhost:3000`.
-2. Log into your account and join/view a group
-3. See pantry inventory and update if needed
-4. see what's depleting and what to restock.
+1. Open your browser and visit `http://localhost:5173`.
+2. Log into your account and join/create a group or view your groups.
+3. See pantry inventory and grocery checklist.
+4. Add/Remove or restock items.
 
 ---
 
@@ -63,8 +63,6 @@ elmo-hikes/
 - **Supreet** - BCIT CST Student with a passion for gaming and DC comics.
 
 - **Ziad Malik** - BCIT CST Student with a passion for gaming, cooking and programming.
-- **RudraP** - BCIT CST Student with a passion of exploring new technologies. Fun fact: I love playing soccer and video games in my free time.
-
 ---
 
 
