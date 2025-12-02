@@ -279,7 +279,7 @@ function wire() {
   $("#savePhotoBtn")?.addEventListener("click", onSavePhoto);
 
   $("#goGroupsBtn")?.addEventListener("click", () => {
-    window.location.href = "/groups.html";
+    window.location.href = "/main.html";
   });
 
   $("#signOutBtn")?.addEventListener("click", async () => {

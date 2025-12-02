@@ -53,8 +53,6 @@ class SiteNavbar extends HTMLElement {
                   <a href="indexloggedin.html" class="active">Home</a>
                   <a href="main.html" class="active">Your Groups</a>
                   <a href="profile.html" class="active">Profile</a>
-                  <a href="#features">Features</a>
-                  <a href="#learn-more">Learn More</a>
                 </nav>
                 <div id="authControls" class="auth-controls d-flex align-items-center gap-2 my-2 my-lg-0"></div>
               </div>
