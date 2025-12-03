@@ -7,11 +7,6 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Same as signedIn, kept for compatibility with existing code
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
     // In updates, 'resource' exists; for creates, check owner in the create rule
     function isOwner() {
       return signedIn() && resource.data.ownerUid == request.auth.uid;
@@ -47,15 +42,13 @@ service cloud.firestore {
 
     // For member updates (non-owners): only 'users' may change; everything else must remain identical
     function usersOnlyChangeImmutableElseEqual() {
-      return keysChangedOnly(['users', 'userUids', 'pantryUpdatedAt', 'updatedAt']) &&
+      return keysChangedOnly(['users', 'pantryUpdatedAt', 'updatedAt']) &&
              request.resource.data.name == resource.data.name &&
              request.resource.data.password == resource.data.password &&
              request.resource.data.ownerUid == resource.data.ownerUid &&
              request.resource.data.createdAt == resource.data.createdAt &&
              request.resource.data.users is list;
-    }
-
-
+  	}
 
     /* ---------- Users collection ---------- */
     match /users/{uid} {
@@ -97,7 +90,7 @@ service cloud.firestore {
       // Non-owner: users OR pantry only, pantry cannot delete keys, all else identical
       function usersOrPantryOnlyChangeImmutableElseEqual() {
         return (
-          // users-only path
+          // users-only path (original)
           usersOnlyChangeImmutableElseEqual()
         ) || (
           // pantry-only path (no deletions); everything else identical
@@ -108,7 +101,6 @@ service cloud.firestore {
           request.resource.data.ownerUid == resource.data.ownerUid &&
           request.resource.data.createdAt == resource.data.createdAt &&
           request.resource.data.users == resource.data.users &&
-          request.resource.data.userUids == resource.data.userUids &&
           request.resource.data.joinKey == resource.data.joinKey
         );
       }
