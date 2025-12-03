@@ -1,14 +1,5 @@
-// -------------------------------------------------------------
-// src/loginSignup.js
-// -------------------------------------------------------------
-// Part of the COMP1800 Projects 1 Course (BCIT).
-// Starter code provided for students to use and adapt.
-// Manages the login/signup form behaviour and redirects.
-// -------------------------------------------------------------
-
-import "bootstrap/dist/css/bootstrap.min.css";
+import "/src/styles/global.css";
 import "bootstrap";
-import "./styles/style.css";
 import { loginUser, signupUser, authErrorMessage } from "./authentication.js";
 
 // --- Login and Signup Page ---

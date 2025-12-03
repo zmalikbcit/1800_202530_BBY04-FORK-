@@ -663,7 +663,7 @@ async function start(user) {
       if (isDeletedDoc) {
         if (!hasPending) {
           alert("This group has been deleted.");
-          window.location.href = "/groups.html";
+          window.location.href = "/main.html";
         }
         return;
       }
@@ -679,7 +679,7 @@ async function start(user) {
 
       if (!hasPending && uid && !isMember && uid !== state.groupDoc.ownerUid) {
         alert("You are no longer a member of this group.");
-        window.location.href = "/groups.html";
+        window.location.href = "/main.html";
         return;
       }
 

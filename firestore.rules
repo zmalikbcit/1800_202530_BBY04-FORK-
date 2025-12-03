@@ -1,0 +1,140 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* ---------- Common helpers ---------- */
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Same as signedIn, kept for compatibility with existing code
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // In updates, 'resource' exists; for creates, check owner in the create rule
+    function isOwner() {
+      return signedIn() && resource.data.ownerUid == request.auth.uid;
+    }
+
+    // Changed keys helper
+    function keysChangedOnly(allowed) {
+      return request.resource.data.diff(resource.data).changedKeys().hasOnly(allowed);
+    }
+
+    // Validate group name (1–80 chars)
+    function validName() {
+      return request.resource.data.name is string
+             && request.resource.data.name.size() > 0
+             && request.resource.data.name.size() <= 80;
+    }
+
+    // Validate joinKey: sluggy, 3–40 chars, a-z0-9 and hyphens
+    function validJoinKey() {
+      return request.resource.data.joinKey is string
+             && request.resource.data.joinKey.size() >= 3
+             && request.resource.data.joinKey.size() <= 40
+             && request.resource.data.joinKey.matches('^[a-z0-9-]+$');
+    }
+
+    // Only name and/or joinKey may change
+    function renameFieldsOnly() {
+      let changed = request.resource.data.diff(resource.data).changedKeys();
+      return changed.hasOnly(['name']) ||
+             changed.hasOnly(['joinKey']) ||
+             changed.hasOnly(['name','joinKey']);
+    }
+
+    // For member updates (non-owners): only 'users' may change; everything else must remain identical
+    function usersOnlyChangeImmutableElseEqual() {
+      return keysChangedOnly(['users', 'userUids', 'pantryUpdatedAt', 'updatedAt']) &&
+             request.resource.data.name == resource.data.name &&
+             request.resource.data.password == resource.data.password &&
+             request.resource.data.ownerUid == resource.data.ownerUid &&
+             request.resource.data.createdAt == resource.data.createdAt &&
+             request.resource.data.users is list;
+    }
+
+
+
+    /* ---------- Users collection ---------- */
+    match /users/{uid} {
+    	allow read: if signedIn();           
+    	allow write: if signedIn() && request.auth.uid == uid;
+    }
+
+    /* ---------- Groups collection ---------- */
+    match /groups/{groupId} {
+
+      // everyone signed in can read group docs
+      allow read: if signedIn();
+
+      // group creation
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'name', 'password', 'createdAt', 'ownerUid', 'users', 'joinKey'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.password is string
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.users is list
+        && validName()
+        && validJoinKey();
+
+      // --- Pantry helpers ---
+      function pantryUpdateOnly() {
+        return keysChangedOnly(['pantry', 'pantryUpdatedAt', 'updatedAt']) &&
+               request.resource.data.pantry is map;
+      }
+
+      // Non-owner may NOT delete existing pantry keys
+      function pantryNoDeletions() {
+        return request.resource.data.pantry is map &&
+               request.resource.data.pantry.keys().hasAll(resource.data.pantry.keys());
+      }
+
+      // Non-owner: users OR pantry only, pantry cannot delete keys, all else identical
+      function usersOrPantryOnlyChangeImmutableElseEqual() {
+        return (
+          // users-only path
+          usersOnlyChangeImmutableElseEqual()
+        ) || (
+          // pantry-only path (no deletions); everything else identical
+          pantryUpdateOnly() &&
+          pantryNoDeletions() &&
+          request.resource.data.name == resource.data.name &&
+          request.resource.data.password == resource.data.password &&
+          request.resource.data.ownerUid == resource.data.ownerUid &&
+          request.resource.data.createdAt == resource.data.createdAt &&
+          request.resource.data.users == resource.data.users &&
+          request.resource.data.userUids == resource.data.userUids &&
+          request.resource.data.joinKey == resource.data.joinKey
+        );
+      }
+
+      // Update:
+      //  - Owner: can rename, update users, and freely modify pantry (including deletions).
+      //  - Non-owner: can update users OR pantry, but pantry updates may not delete keys.
+      allow update: if signedIn() && (
+        ( isOwner() && (
+            renameFieldsOnly()
+            || usersOnlyChangeImmutableElseEqual()
+            || pantryUpdateOnly()            // owner can add/edit/remove pantry keys
+          )
+        )
+        || ( !isOwner() && usersOrPantryOnlyChangeImmutableElseEqual() )  // pantry allowed but no deletions
+      );
+
+      // Only owner can delete a group
+      allow delete: if isOwner();
+
+      /* ---------- Chat subcollection inside groups ---------- */
+      match /chat/{msgId} {
+        // Allow only signed-in users to read and write chat messages
+        // (does NOT check membership; mimics your second ruleset)
+        allow read, write: if signedIn();
+      }
+    }
+  }
+}

@@ -8,14 +8,12 @@
       <link rel="script" href="src/main.js" />
       <link rel="icon" type="image/x-icon" href="images/image.ico" />
 
-      <!-- Web Components for shared navbar and footer layout -->
       <script type="module" src="/src/components/site-navbar.js"></script>
       <script type="module" src="/src/components/site-footer.js"></script>
    </head>
    <body>
-      <!-- our own navbar goes here -->
       <site-navbar></site-navbar>
-      <!-- Hero -->
+
       <section class="hero">
          <div class="wrap hero-grid">
             <div class="hero-text">
@@ -25,13 +23,12 @@
                   and save money.
                </p>
                <div class="cta">
-                  <a class="btn primary" href="main.html">Your Pantry</a>
+                  <a class="btn primary" href="main.html">Your Groups</a>
                </div>
             </div>
             <img src="images/pantry.png" alt="Illustration of a pantry" />
          </div>
       </section>
-      <!-- Feature band -->
       <section id="features" class="band">
          <div class="wrap band-grid">
             <div>
@@ -48,7 +45,6 @@
             </div>
          </div>
       </section>
-      <!-- Testimonials -->
       <section id="learn-more" class="testimonials">
          <div class="wrap">
             <h3>What our users say</h3>
@@ -82,8 +78,9 @@
             </div>
          </div>
       </section>
-      <!-- our own footer goes here -->
+
       <site-footer></site-footer>
+
       <script type="module" src="/src/app.js"></script>
       <script type="module" src="/src/main.js"></script>
    </body>
