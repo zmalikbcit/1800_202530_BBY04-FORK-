@@ -222,7 +222,7 @@ function renderMembers() {
         "Member";
 
       chip.querySelector(".avatar").src =
-        photoURL || "/images/avatar-placeholder.png";
+        photoURL || "/images/default_user.png";
       chip.querySelector(".avatar").alt = `${fallbackName} avatar`;
       chip.querySelector(".name").textContent = fallbackName;
 

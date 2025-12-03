@@ -28,7 +28,7 @@ class SiteNavbar extends HTMLElement {
             <header class="topbar">
               <div class="wrap">
                 <div class="brand">
-                  <img src="/public/images/logowhite.png" alt="Pantry Tracker Logo" class="logo-image"/>
+                  <img src="/images/logowhite.png" alt="Pantry Tracker Logo" class="logo-image"/>
                 </div>
 
                 <nav class="nav">
@@ -46,7 +46,7 @@ class SiteNavbar extends HTMLElement {
             <header class="topbar">
               <div class="wrap">
                 <div class="brand">
-                  <img src="/public/images/logowhite.png" alt="Pantry Tracker Logo" class="logo-image"/>
+                  <img src="/images/logowhite.png" alt="Pantry Tracker Logo" class="logo-image"/>
                 </div>
 
                 <nav class="nav">

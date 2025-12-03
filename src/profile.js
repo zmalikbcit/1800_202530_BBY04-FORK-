@@ -110,7 +110,7 @@ function renderHeader() {
 
   const img = $("#profileImage");
   if (img) {
-    img.src = u.photoURL || "/images/avatar-placeholder.png";
+    img.src = u.photoURL || "/images/default_user.png";
     img.alt = `${u.displayName || username} avatar`;
   }
 
