@@ -42,13 +42,14 @@ service cloud.firestore {
 
     // For member updates (non-owners): only 'users' may change; everything else must remain identical
     function usersOnlyChangeImmutableElseEqual() {
-      return keysChangedOnly(['users', 'pantryUpdatedAt', 'updatedAt']) &&
+      return keysChangedOnly(['users', 'userUids', 'pantryUpdatedAt', 'updatedAt']) &&
              request.resource.data.name == resource.data.name &&
              request.resource.data.password == resource.data.password &&
              request.resource.data.ownerUid == resource.data.ownerUid &&
              request.resource.data.createdAt == resource.data.createdAt &&
              request.resource.data.users is list;
-  	}
+    }
+
 
     /* ---------- Users collection ---------- */
     match /users/{uid} {
