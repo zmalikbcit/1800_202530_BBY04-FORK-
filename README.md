@@ -98,29 +98,29 @@ We used a user-centred design process (low-fi → hi-fi prototypes, quick user f
 
 5. From there:
 
-   * Go to **Sign Up** and create an account.
-   * Create your first **group** from `main.html`.
+   * Go to Sign Up and create an account.
+   * Create your first group from `main.html`.
    * Start adding pantry items and watch the grocery list update.
-   * Open **Group Chat** from the group page to coordinate with others.
+   * Open Group Chat from the group page to coordinate with others.
 
 ### Basic flow
 
-1. **Sign up / log in**
+1. Sign up / log in
    Use email and password to create an account.
 
-2. **Create or join a group**
+2. Create or join a group
 
    * Pick a group name and password.
    * Set a join name (code) that others can use to join.
    * Or, if you already know the join name and password, use the “Join Group” panel.
 
-3. **Manage pantry**
+3. Manage pantry
 
    * Add items (e.g., “Eggs”, `12` `pcs`).
    * Set baselines for important items (e.g., always keep 6 eggs).
    * The grocery list will auto-populate when you drop below baseline.
 
-4. **Check the grocery list**
+4. Check the grocery list
 
    * Before shopping, open the group and scroll to “Grocery Checklist”.
    * After shopping, either:
@@ -128,9 +128,9 @@ We used a user-centred design process (low-fi → hi-fi prototypes, quick user f
      * bump the amounts in the pantry table, or
      * hit “Dismiss” for items you’ve restocked.
 
-5. **Chat with your group**
+5. Chat with your group
 
-   * Click **Open Group Chat** on the group page.
+   * Click Open Group Chat on the group page.
    * Use the chat to coordinate who’s buying what.
 
 ---
@@ -172,8 +172,8 @@ pantry-tracker/
 
 ## Contributors
 
-* **Supreet** – BCIT CST student who likes gaming and DC comics and keeps the design tidy.
-* **Ziad Malik** – BCIT CST student who enjoys gaming, cooking, and building little tools like this to make life easier.
+* Supreet – BCIT CST student who likes gaming and DC comics and keeps the design tidy.
+* Ziad Malik – BCIT CST student who enjoys gaming, cooking, and building little tools like this to make life easier.
 
 ---
 
@@ -200,10 +200,10 @@ pantry-tracker/
 
 ### Future ideas
 
-* Add **expiry dates** and highlight items that are about to expire.
-* Push **notifications** or in-app alerts when certain items drop below baseline.
-* Add **roles/permissions** (e.g., “owner”, “editor”, “viewer”) inside each group.
-* Optional **budget view** that shows rough monthly spend per group.
+* Add expiry dates and highlight items that are about to expire.
+* Push notifications or in-app alerts when certain items drop below baseline.
+* Add roles/permissions (e.g., “owner”, “editor”, “viewer”) inside each group.
+* Optional budget view that shows rough monthly spend per group.
 * Dark mode toggle for late-night browsing.
 
 ---
