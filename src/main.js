@@ -16,6 +16,7 @@ import {
 
 const alerts = document.getElementById("alerts");
 
+// quick bootstrap alert helper
 function showAlert(msg, type = "success") {
   const div = document.createElement("div");
   div.className = `alert alert-${type}`;
@@ -31,7 +32,7 @@ function setButtonLoading(btn, loading) {
   btn.textContent = loading ? "Please wait..." : btn.dataset._orig;
 }
 
-// Simple slugifier: "My Group!!" -> "my-group"
+// "my-group-01" style key
 function slugifyJoinKey(s) {
   return (s || "")
     .toString()
@@ -43,9 +44,11 @@ function slugifyJoinKey(s) {
     .slice(0, 40);
 }
 
+// load groups where current user is a member
 async function renderMyGroups() {
   const list = document.getElementById("my-groups");
   if (!list) return;
+
   list.innerHTML = "";
 
   const user = auth.currentUser;
@@ -53,10 +56,11 @@ async function renderMyGroups() {
 
   const snap = await getDocs(collection(db, "groups"));
   const my = [];
+
   snap.forEach((docSnap) => {
     const g = docSnap.data();
 
-    // Skip soft-deleted groups
+    // ignore deleted ones
     if (g.deletedAt) return;
 
     const isMember =
@@ -72,17 +76,17 @@ async function renderMyGroups() {
     return;
   }
 
-  for (const g of my) {
+  my.forEach((g) => {
     const li = document.createElement("li");
     li.className =
       "list-group-item d-flex justify-content-between align-items-center";
     li.innerHTML = `<a href="/myGroup.html?docID=${g.id}">${g.name}</a>`;
     list.appendChild(li);
-  }
+  });
 }
 
 /* ---------------------------
-   CREATE (with joinKey)
+   Create group (with joinKey)
 ---------------------------- */
 async function createGroupJoinKeyFlow(name, password) {
   const user = auth.currentUser;
@@ -98,7 +102,7 @@ async function createGroupJoinKeyFlow(name, password) {
   if (!password) throw new Error("Password is required.");
   if (!joinKey) throw new Error("Join name is required.");
 
-  // Best-effort uniqueness check
+  // quick uniqueness check
   const q = query(
     collection(db, "groups"),
     where("joinKey", "==", joinKey),
@@ -108,13 +112,12 @@ async function createGroupJoinKeyFlow(name, password) {
   if (!existing.empty)
     throw new Error("That join name is already taken. Try another.");
 
-  // NOTE: serverTimestamp() is NOT allowed inside arrays -> use Date.now()
   const ownerUserObj = {
     uid: user.uid,
     displayName: user.displayName || user.email || "Owner",
     email: user.email || "",
     photoURL: user.photoURL || "",
-    joinedAt: Date.now(),
+    joinedAt: Date.now(), // keep timestamps simple in arrays
   };
 
   await addDoc(collection(db, "groups"), {
@@ -128,7 +131,7 @@ async function createGroupJoinKeyFlow(name, password) {
 }
 
 /* ---------------------------
-   JOIN (by joinKey)
+   Join existing group by key
 ---------------------------- */
 async function joinGroupByJoinKey(joinKeyInput, passwordInput) {
   const user = auth.currentUser;
@@ -152,12 +155,8 @@ async function joinGroupByJoinKey(joinKeyInput, passwordInput) {
   const docSnap = snap.docs[0];
   const g = docSnap.data();
 
-  // Prevent joining deleted groups
-  if (g.deletedAt) {
-    throw new Error("This group has been deleted.");
-  }
-
-  if (g.password !== pw) throw new Error("Incorrect password.");
+  if (g.deletedAt) throw new Error("This group has been deleted.");
+  if (g.password !== pw) throw new Error("Incorrect group password.");
 
   const already =
     Array.isArray(g.users) && g.users.some((u) => u?.uid === user.uid);
@@ -169,17 +168,14 @@ async function joinGroupByJoinKey(joinKeyInput, passwordInput) {
     displayName: user.displayName || user.email || "Member",
     email: user.email || "",
     photoURL: user.photoURL || "",
-    joinedAt: Date.now(), // no serverTimestamp() in arrays
+    joinedAt: Date.now(),
   });
 
   await updateDoc(doc(db, "groups", docSnap.id), { users: usersNext });
-
-  // Optional redirect after join:
-  // window.location.href = `/myGroup.html?docID=${encodeURIComponent(docSnap.id)}`;
 }
 
+// hook up create/join forms
 function wireForms() {
-  // Create
   const createForm = document.getElementById("create-group-form");
   const createBtn = document.getElementById("create-group-btn");
 
@@ -188,7 +184,9 @@ function wireForms() {
     const name =
       document.getElementById("create-group-name")?.value.trim() || "";
     const pw = document.getElementById("create-group-password")?.value;
+
     setButtonLoading(createBtn, true);
+
     try {
       await createGroupJoinKeyFlow(name, pw);
       showAlert(`Group "${name}" created.`, "success");
@@ -202,7 +200,6 @@ function wireForms() {
     }
   });
 
-  // Join
   const joinForm = document.getElementById("join-group-form");
   const joinBtn = document.getElementById("join-group-btn");
 
@@ -211,7 +208,9 @@ function wireForms() {
     const joinName =
       document.getElementById("join-group-name")?.value.trim() || "";
     const pw = document.getElementById("join-group-password")?.value;
+
     setButtonLoading(joinBtn, true);
+
     try {
       await joinGroupByJoinKey(joinName, pw);
       showAlert(`Joined "${joinName}".`, "success");
@@ -226,15 +225,19 @@ function wireForms() {
   });
 }
 
+// small entrypoint
 function showDashboard() {
   const nameElement = document.getElementById("name-goes-here");
+
   onAuthReady(async (user) => {
     if (!user) {
       location.href = "index.html";
       return;
     }
+
     const name = user.displayName || user.email;
     if (nameElement) nameElement.textContent = `${name}!`;
+
     wireForms();
     await renderMyGroups();
   });

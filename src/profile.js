@@ -14,9 +14,7 @@ import {
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
-/* =========================================================
-   State & small utilities (same style as myGroup.js)
-   ========================================================= */
+/* ------------ helpers ------------ */
 const $ = (sel) => document.querySelector(sel);
 const setTxt = (sel, v) => {
   const el = $(sel);
@@ -27,7 +25,7 @@ const fmtTime = (ts) => {
     if (ts?.toDate) return ts.toDate().toLocaleString();
     if (typeof ts === "number") return new Date(ts).toLocaleString();
   } catch {
-    /* noop */
+    /* ignore */
   }
   return "";
 };
@@ -42,9 +40,7 @@ const state = {
 
 const userRef = () => doc(db, "users", state.profileUid);
 
-/* =========================================================
-   Firestore: load profile + groups
-   ========================================================= */
+/* ------------ Firestore: load profile + groups ------------ */
 async function loadProfile() {
   const ref = userRef();
   const snap = await getDoc(ref);
@@ -55,10 +51,8 @@ async function loadProfile() {
     }
 
     const au = state.currentUser;
-
     const username =
-      au.displayName ||
-      (au.email ? au.email.split("@")[0] : "user");
+      au.displayName || (au.email ? au.email.split("@")[0] : "user");
 
     const seedProfile = {
       username,
@@ -72,7 +66,6 @@ async function loadProfile() {
 
     await setDoc(ref, seedProfile, { merge: true });
 
-    // re-read so state is consistent
     const fresh = await getDoc(ref);
     state.profileDoc = { id: fresh.id, ref, ...fresh.data() };
     return state.profileDoc;
@@ -82,10 +75,7 @@ async function loadProfile() {
   return state.profileDoc;
 }
 
-
-/* =========================================================
-   Rendering (mirrors myGroup render rhythm)
-   ========================================================= */
+/* ------------ rendering ------------ */
 function renderHeader() {
   const u = state.profileDoc || {};
 
@@ -114,7 +104,6 @@ function renderHeader() {
     img.alt = `${u.displayName || username} avatar`;
   }
 
-  // Edit panel visibility + seed inputs
   const panel = $("#editPanel");
   if (panel) panel.classList[state.isMe ? "remove" : "add"]("d-none");
 
@@ -141,13 +130,16 @@ function renderGroups(groups) {
     .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
     .forEach((g) => {
       const chip = tpl.content.cloneNode(true);
+
       chip.querySelector(".name").textContent = g.name || "Untitled Group";
-      chip.querySelector(".avatar").src =
-        g.code ? `./images/${g.code}.jpg` : "/images/group-placeholder.png";
+      chip.querySelector(".avatar").src = g.code
+        ? `./images/${g.code}.jpg`
+        : "/images/group-placeholder.png";
       chip.querySelector(".avatar").alt = `${g.name || "Group"} image`;
 
-      chip.querySelector(".member-chip").style.cursor = "pointer";
-      chip.querySelector(".member-chip").addEventListener("click", () => {
+      const wrapper = chip.querySelector(".member-chip");
+      wrapper.style.cursor = "pointer";
+      wrapper.addEventListener("click", () => {
         window.location.href = `/myGroup.html?docID=${encodeURIComponent(
           g.id
         )}`;
@@ -170,9 +162,7 @@ function watchUserGroups(uid) {
   });
 }
 
-/* =========================================================
-   Sync profile snapshots into groups
-   ========================================================= */
+/* ------------ sync profile snapshot into groups ------------ */
 async function syncUserToGroups(uid, patch) {
   const qy = query(
     collection(db, "groups"),
@@ -189,9 +179,11 @@ async function syncUserToGroups(uid, patch) {
 
     const nextUsers = users.map((m) => {
       if (m?.uid !== uid) return m;
+
       const next = { ...m, ...patch };
       const fallbackName =
         next.username || next.displayName || m.username || m.displayName;
+
       next.displayName = next.displayName || fallbackName || "Member";
       return next;
     });
@@ -205,11 +197,10 @@ async function syncUserToGroups(uid, patch) {
   await batch.commit();
 }
 
-/* =========================================================
-   Edit actions
-   ========================================================= */
+/* ------------ edit actions ------------ */
 async function onSaveDisplayName() {
   if (!state.isMe) return;
+
   const newName = ($("#displayNameInput")?.value || "").trim();
   if (!newName) return alert("Display name cannot be empty.");
 
@@ -233,6 +224,7 @@ async function onSaveDisplayName() {
 
 async function onSaveBio() {
   if (!state.isMe) return;
+
   const newBio = ($("#bioInput")?.value || "").trim();
 
   try {
@@ -251,6 +243,7 @@ async function onSaveBio() {
 
 async function onSavePhoto() {
   if (!state.isMe) return;
+
   const newUrl = ($("#photoUrlInput")?.value || "").trim();
 
   try {
@@ -270,9 +263,7 @@ async function onSavePhoto() {
   }
 }
 
-/* =========================================================
-   Wiring & init
-   ========================================================= */
+/* ------------ wiring + bootstrap ------------ */
 function wire() {
   $("#saveDisplayNameBtn")?.addEventListener("click", onSaveDisplayName);
   $("#saveBioBtn")?.addEventListener("click", onSaveBio);
@@ -305,10 +296,8 @@ async function start(user) {
     await loadProfile();
     renderHeader();
 
-    // live groups membership
     watchUserGroups(state.profileUid);
 
-    // live profile doc updates
     onSnapshot(userRef(), (snap) => {
       if (!snap.exists()) return;
       state.profileDoc = { id: snap.id, ref: userRef(), ...snap.data() };

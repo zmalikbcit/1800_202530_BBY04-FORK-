@@ -1,2 +1,4 @@
+/* grab bootstrap first, then our own theme */
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "./style.css";
+/* although counterintuitive, we import bootstrap first so our styles can override it */

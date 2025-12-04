@@ -1,87 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>Pantry Tracker</title>
-      <link rel="stylesheet" href="src/styles/style.css" />
-      <link rel="script" href="src/main.js" />
-      <link rel="icon" type="image/x-icon" href="images/image.ico" />
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Pantry Tracker</title>
+    <meta
+      name="description"
+      content="Jump back into your shared pantry groups and grocery lists."
+    />
 
-      <script type="module" src="/src/components/site-navbar.js"></script>
-      <script type="module" src="/src/components/site-footer.js"></script>
-   </head>
-   <body>
-      <site-navbar></site-navbar>
+    <!-- shared styles + favicon -->
+    <link rel="stylesheet" href="src/styles/style.css" />
+    <link rel="icon" type="image/x-icon" href="images/image.ico" />
 
-      <section class="hero">
-         <div class="wrap hero-grid">
-            <div class="hero-text">
-               <h1>Welcome to Pantry Tracker!</h1>
-               <p class="lead">
-                  Track your food, reduce waste, and plan simple meals. Stay organized
-                  and save money.
-               </p>
-               <div class="cta">
-                  <a class="btn primary" href="main.html">Your Groups</a>
-               </div>
+    <!-- layout pieces -->
+    <script type="module" src="/src/components/site-navbar.js"></script>
+    <script type="module" src="/src/components/site-footer.js"></script>
+  </head>
+
+  <body>
+    <site-navbar></site-navbar>
+
+    <!-- logged-in hero -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1>Welcome to Pantry Tracker!</h1>
+          <p class="lead">
+            Track your food, reduce waste, and plan simple meals. Stay
+            organized and save money.
+          </p>
+
+          <div class="cta">
+            <a class="btn primary" href="main.html">Your Groups</a>
+          </div>
+        </div>
+
+        <img
+          src="images/pantry.png"
+          alt="Illustration of an organized pantry"
+        />
+      </div>
+    </section>
+
+    <!-- feature reminder -->
+    <section id="features" class="band">
+      <div class="wrap band-grid">
+        <div>
+          <h2>Make your pantry work smarter</h2>
+          <p>
+            Keep an up-to-date list of what you have, what’s expiring, and
+            what you need to buy. Perfect for roommates and families.
+          </p>
+
+          <ul class="list">
+            <li>Inventory &amp; expiry dates</li>
+            <li>Shared shopping list</li>
+            <li>Basic budget totals</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- testimonials -->
+    <section id="learn-more" class="testimonials">
+      <div class="wrap">
+        <h3>What our users say</h3>
+
+        <div class="cards">
+          <article class="card">
+            <div
+              class="photo a"
+              role="img"
+              aria-label="Ray"
+            ></div>
+            <div class="content">
+              <h4>Ray</h4>
+              <p>Great for roomies. We’ve saved a lot and waste less food.</p>
             </div>
-            <img src="images/pantry.png" alt="Illustration of a pantry" />
-         </div>
-      </section>
-      <section id="features" class="band">
-         <div class="wrap band-grid">
-            <div>
-               <h2>Make your pantry work smarter</h2>
-               <p>
-                  Keep an up-to-date list of what you have, what’s expiring, and what
-                  you need to buy. Perfect for roommates and families.
-               </p>
-               <ul class="list">
-                  <li>Inventory & expiry dates</li>
-                  <li>Shared shopping list</li>
-                  <li>Basic budget totals</li>
-               </ul>
-            </div>
-         </div>
-      </section>
-      <section id="learn-more" class="testimonials">
-         <div class="wrap">
-            <h3>What our users say</h3>
-            <div class="cards">
-               <article class="card">
-                  <div class="photo a" role="img" aria-label="Ray"></div>
-                  <div class="content">
-                     <h4>Ray</h4>
-                     <p>Great for roomies. We’ve saved a lot and waste less food.</p>
-                  </div>
-                  <div class="foot">1 week ago</div>
-               </article>
-               <article class="card">
-                  <div class="photo b" role="img" aria-label="Asif"></div>
-                  <div class="content">
-                     <h4>Asif</h4>
-                     <p>Helped me save about $200 this month and plan easy meals.</p>
-                  </div>
-                  <div class="foot">4 days ago</div>
-               </article>
-               <article class="card">
-                  <div class="photo c" role="img" aria-label="Jean"></div>
-                  <div class="content">
-                     <h4>Jean</h4>
-                     <p>
-                        I recommend it to anyone trying to cut waste and save money.
-                     </p>
-                  </div>
-                  <div class="foot">2 weeks ago</div>
-               </article>
-            </div>
-         </div>
-      </section>
+            <div class="foot">1 week ago</div>
+          </article>
 
-      <site-footer></site-footer>
+          <article class="card">
+            <div
+              class="photo b"
+              role="img"
+              aria-label="Asif"
+            ></div>
+            <div class="content">
+              <h4>Asif</h4>
+              <p>Helped me save about $200 this month and plan easy meals.</p>
+            </div>
+            <div class="foot">4 days ago</div>
+          </article>
 
-      <script type="module" src="/src/app.js"></script>
-      <script type="module" src="/src/main.js"></script>
-   </body>
+          <article class="card">
+            <div
+              class="photo c"
+              role="img"
+              aria-label="Jean"
+            ></div>
+            <div class="content">
+              <h4>Jean</h4>
+              <p>
+                I recommend it to anyone trying to cut waste and save money.
+              </p>
+            </div>
+            <div class="foot">2 weeks ago</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <site-footer></site-footer>
+
+    <!-- app init + main logic -->
+    <script type="module" src="/src/app.js"></script>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

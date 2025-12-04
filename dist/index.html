@@ -1,87 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>Pantry Tracker</title>
-      <link rel="script" href="/assets/main-BD-YXcN0.js" />
-      <link rel="icon" type="image/x-icon" href="images/image.ico" />
-
-     <script type="module" crossorigin src="/assets/firebaseConfig-D3CXmay8.js"></script>
-     <script type="module" crossorigin src="/assets/bootstrap.esm-BEI9jhF-.js"></script>
-     <script type="module" crossorigin src="/assets/app-hhu_teIN.js"></script>
-     <link rel="stylesheet" crossorigin href="/assets/bootstrap-D3vHCu1w.css">
-     <link rel="stylesheet" crossorigin href="/assets/style-B3a1MbyO.css">
-   </head>
-   <body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Pantry Tracker</title>
+    <meta
+      name="description"
+      content="Keep a shared pantry inventory, grocery list, and simple budget with your roommates or family."
+    />
 
-      <site-navbar></site-navbar>
+    <!-- shared styles + favicon -->
+    <link rel="icon" type="image/x-icon" href="images/image.ico" />
 
-      <section class="hero">
-         <div class="wrap hero-grid">
-            <div class="hero-text">
-               <h1>Welcome to Pantry Tracker!</h1>
-               <p class="lead">
-                  Track your food, reduce waste, and plan simple meals. Stay organized
-                  and save money.
-               </p>
-               <div class="cta">
-                  <a class="btn primary" href="login.html">Login</a>
-                  <a class="btn" href="signup.html">Sign Up</a>
-               </div>
-            </div>
-            <img src="images/pantry.png" alt="Illustration of a pantry" />
-         </div>
-      </section>
-      <section id="features" class="band">
-         <div class="wrap band-grid">
-            <div>
-               <h2>Make your pantry work smarter</h2>
-               <p>
-                  Keep an up-to-date list of what you have, what’s expiring, and what
-                  you need to buy. Perfect for roommates and families.
-               </p>
-               <ul class="list">
-                  <li>Inventory & expiry dates</li>
-                  <li>Shared shopping list</li>
-                  <li>Basic budget totals</li>
-               </ul>
-            </div>
-         </div>
-      </section>
-      <section id="learn-more" class="testimonials">
-         <div class="wrap">
-            <h3>What our users say</h3>
-            <div class="cards">
-               <article class="card">
-                  <div class="photo a" role="img" aria-label="Ray"></div>
-                  <div class="content">
-                     <h4>Ray</h4>
-                     <p>Great for roommates. We’ve saved a lot and waste less food.</p>
-                  </div>
-                  <div class="foot">1 week ago</div>
-               </article>
-               <article class="card">
-                  <div class="photo b" role="img" aria-label="Asif"></div>
-                  <div class="content">
-                     <h4>Asif</h4>
-                     <p>Helped me save about $200 this month and plan easy meals.</p>
-                  </div>
-                  <div class="foot">4 days ago</div>
-               </article>
-               <article class="card">
-                  <div class="photo c" role="img" aria-label="Jean"></div>
-                  <div class="content">
-                     <h4>Jean</h4>
-                     <p>I recommend it to anyone trying to cut waste and save money.</p>
-                  </div>
-                  <div class="foot">2 weeks ago</div>
-               </article>
-            </div>
-         </div>
-      </section>
+    <!-- layout pieces -->
+    <script type="module" crossorigin src="/assets/firebaseConfig-DM3SJotR.js"></script>
+    <script type="module" crossorigin src="/assets/bootstrap.esm-DCaPJYDw.js"></script>
+    <script type="module" crossorigin src="/assets/app-hA-q0s1F.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/bootstrap-CAgFI_Ph.css">
+    <link rel="stylesheet" crossorigin href="/assets/style-DdmBzOW9.css">
+  </head>
 
-      <site-footer></site-footer>
-      
-   </body>
+  <body>
+    <!-- site-wide navbar -->
+    <site-navbar></site-navbar>
+
+    <!-- hero / intro -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <h1>Welcome to Pantry Tracker!</h1>
+          <p class="lead">
+            Track your food, reduce waste, and plan simple meals. Stay
+            organized and save money.
+          </p>
+
+          <div class="cta">
+            <a class="btn primary" href="login.html">Login</a>
+            <a class="btn" href="signup.html">Sign Up</a>
+          </div>
+        </div>
+
+        <img
+          src="images/pantry.png"
+          alt="Illustration of an organized pantry"
+        />
+      </div>
+    </section>
+
+    <!-- features highlight -->
+    <section id="features" class="band">
+      <div class="wrap band-grid">
+        <div>
+          <h2>Make your pantry work smarter</h2>
+          <p>
+            Keep an up-to-date list of what you have, what’s expiring, and
+            what you need to buy. Perfect for roommates and families.
+          </p>
+
+          <ul class="list">
+            <li>Inventory &amp; expiry dates</li>
+            <li>Shared shopping list</li>
+            <li>Basic budget totals</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- social proof -->
+    <section id="learn-more" class="testimonials">
+      <div class="wrap">
+        <h3>What our users say</h3>
+
+        <div class="cards">
+          <article class="card">
+            <div
+              class="photo a"
+              role="img"
+              aria-label="Ray"
+            ></div>
+            <div class="content">
+              <h4>Ray</h4>
+              <p>Great for roommates. We’ve saved a lot and waste less food.</p>
+            </div>
+            <div class="foot">1 week ago</div>
+          </article>
+
+          <article class="card">
+            <div
+              class="photo b"
+              role="img"
+              aria-label="Asif"
+            ></div>
+            <div class="content">
+              <h4>Asif</h4>
+              <p>Helped me save about $200 this month and plan easy meals.</p>
+            </div>
+            <div class="foot">4 days ago</div>
+          </article>
+
+          <article class="card">
+            <div
+              class="photo c"
+              role="img"
+              aria-label="Jean"
+            ></div>
+            <div class="content">
+              <h4>Jean</h4>
+              <p>I recommend it to anyone trying to cut waste and save money.</p>
+            </div>
+            <div class="foot">2 weeks ago</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- shared footer -->
+    <site-footer></site-footer>
+
+    <!-- bootstraps client-side app -->
+  </body>
 </html>

@@ -1,8 +1,3 @@
-// Firestore helpers to create groups and let users join them.
-// Groups store BOTH a snapshot of member info (users[]) for fast render
-// and a parallel uid list (userUids[]) so we can query by membership.
-// -------------------------------------------------------------
-
 import { auth, db } from "/src/firebaseConfig.js";
 import {
   doc,
@@ -13,10 +8,7 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 
-/**
- * Build a stable doc id from a group name (so names are unique).
- * Example: "Team Alpha" -> "team-alpha"
- */
+// turn a name into a stable id: "Team Alpha" -> "team-alpha"
 function groupIdFromName(name) {
   return (name || "")
     .trim()
@@ -26,20 +18,7 @@ function groupIdFromName(name) {
     .replace(/^-|-$/g, "");
 }
 
-/**
- * Create a new group document if it doesn't already exist.
- * Schema:
- * {
- *   name: string,
- *   password: string, // plaintext per your requirement
- *   createdAt: Timestamp,
- *   ownerUid: string|null,
- *   users: [ { uid, username, displayName, photoURL, email, joinedAt } ],
- *   userUids: [uid, uid, ...] // for array-contains queries
- * }
- *
- * Returns the group doc id.
- */
+// make a group doc if it doesn't exist yet
 export async function createGroup(name, password) {
   if (!name || !password) {
     throw new Error("Group name and password are required.");
@@ -54,8 +33,8 @@ export async function createGroup(name, password) {
   }
 
   const uid = auth.currentUser?.uid || null;
-
   let userEntry = null;
+
   if (uid) {
     const uref = doc(db, "users", uid);
     const usnap = await getDoc(uref);
@@ -89,11 +68,7 @@ export async function createGroup(name, password) {
   return gid;
 }
 
-/**
- * Join an existing group by name + password.
- * Adds the current user to users[]/userUids[] if not already present.
- * Returns the group doc id.
- */
+// join a group by its name + password
 export async function joinGroup(name, password) {
   if (!name || !password) {
     throw new Error("Group name and password are required.");
@@ -144,9 +119,10 @@ export async function joinGroup(name, password) {
   return gid;
 }
 
-/** Optional helper */
+// quick membership check
 export async function isMemberOfGroup(name) {
   if (!auth.currentUser) return false;
+
   const gid = groupIdFromName(name);
   const ref = doc(db, "groups", gid);
   const snap = await getDoc(ref);

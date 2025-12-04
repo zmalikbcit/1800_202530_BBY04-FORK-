@@ -1,5 +1,4 @@
 import { auth } from "/src/firebaseConfig.js";
-
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -10,10 +9,12 @@ import {
 import { db } from "/src/firebaseConfig.js";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
+// plain login
 export async function loginUser(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
+// signup + seed Firestore user document
 export async function signupUser(name, email, password) {
   const userCredential = await createUserWithEmailAndPassword(
     auth,
@@ -22,10 +23,10 @@ export async function signupUser(name, email, password) {
   );
   const user = userCredential.user;
 
-  // auth displayName
+  // show name in Firebase Auth profile
   await updateProfile(user, { displayName: name });
 
-  // default username fallback
+  // simple username fallback
   const username =
     (name || "").trim() || (email ? email.split("@")[0] : "user");
 
@@ -41,7 +42,7 @@ export async function signupUser(name, email, password) {
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
-    console.log("Firestore user document created successfully!");
+    console.log("Firestore user document created.");
   } catch (error) {
     console.error("Error creating user document in Firestore:", error);
   }
@@ -49,11 +50,13 @@ export async function signupUser(name, email, password) {
   return user;
 }
 
+// full logout + redirect to landing
 export async function logoutUser() {
   await signOut(auth);
   window.location.href = "index.html";
 }
 
+// simple gate for main.html
 export function checkAuthState() {
   onAuthStateChanged(auth, (user) => {
     if (window.location.pathname.endsWith("main.html")) {
@@ -69,10 +72,12 @@ export function checkAuthState() {
   });
 }
 
+// tiny helper to wait for auth state once
 export function onAuthReady(callback) {
   return onAuthStateChanged(auth, callback);
 }
 
+// friendlier error messages
 export function authErrorMessage(error) {
   const code = (error?.code || "").toLowerCase();
 
@@ -91,20 +96,28 @@ export function authErrorMessage(error) {
   return map[code] || "Something went wrong. Please try again.";
 }
 
-// Keep track of functions waiting for auth to be ready
+// -------------------------------------
+// promise style helper for "auth ready"
+// -------------------------------------
 let authReadyResolvers = [];
 
-export const whenAuthReady = new Promise((res) =>
-  authReadyResolvers.push(res)
-);
+export const whenAuthReady = new Promise((res) => {
+  authReadyResolvers.push(res);
+});
 
 export function initializeAuthState(onUserChange) {
   onAuthStateChanged(auth, (user) => {
     if (typeof onUserChange === "function") onUserChange(user);
-    while (authReadyResolvers.length) authReadyResolvers.shift()(user);
+
+    // flush any waiters
+    while (authReadyResolvers.length) {
+      const resolve = authReadyResolvers.shift();
+      resolve(user);
+    }
   });
 }
 
+// minimal logout variant (no redirect)
 export async function logout() {
   await signOut(auth);
 }

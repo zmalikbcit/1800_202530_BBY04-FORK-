@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Group Chat</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Group Chat • Pantry Tracker</title>
+    <meta
+      name="description"
+      content="Real-time chat for your Pantry Tracker group."
+    />
 
-  <!-- styles from chatTest.css -->
-  <link rel="icon" type="image/x-icon" href="images/image.ico" />
+    <!-- main app styles -->
+    <link rel="icon" type="image/x-icon" href="images/image.ico" />
 
+    <!-- firebase setup (shared across pages) -->
+    <script type="module" crossorigin src="/assets/groupChat-Bvfu6iPi.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/firebaseConfig-DM3SJotR.js">
+    <link rel="stylesheet" crossorigin href="/assets/style-DdmBzOW9.css">
+  </head>
 
-  <!-- Firebase -->
+  <body>
+    <!-- chat app mounts here -->
+    <div id="chat-root"></div>
 
-  <script type="module" crossorigin src="/assets/groupChat-B4dxRZ_A.js"></script>
-  <link rel="modulepreload" crossorigin href="/assets/firebaseConfig-D3CXmay8.js">
-  <link rel="stylesheet" crossorigin href="/assets/style-B3a1MbyO.css">
-</head>
-<body>
-  <div id="chat-root"></div>
-
-</body>
+    <!-- chat logic + UI -->
+  </body>
 </html>

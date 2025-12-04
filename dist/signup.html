@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>My BCIT Project</title>
-    <meta name="comp1800 template" content="My 1800 App" />
-
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Pantry Tracker • Sign Up</title>
+    <meta
+      name="description"
+      content="Create a Pantry Tracker account to share pantry inventory and grocery lists."
+    />
 
     <link rel="icon" type="image/x-icon" href="images/image.ico" />
 
-    <!-- Web Components for shared navbar and footer layout -->
-    <script type="module" crossorigin src="/assets/firebaseConfig-D3CXmay8.js"></script>
-    <script type="module" crossorigin src="/assets/bootstrap.esm-BEI9jhF-.js"></script>
-    <script type="module" crossorigin src="/assets/loginSignup-Ci0SGT5q.js"></script>
-    <script type="module" crossorigin src="/assets/app-hhu_teIN.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/bootstrap-D3vHCu1w.css">
+    <!-- shared layout bits -->
+    <script type="module" crossorigin src="/assets/firebaseConfig-DM3SJotR.js"></script>
+    <script type="module" crossorigin src="/assets/bootstrap.esm-DCaPJYDw.js"></script>
+    <script type="module" crossorigin src="/assets/loginSignup-Bwbv3IaD.js"></script>
+    <script type="module" crossorigin src="/assets/app-hA-q0s1F.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/bootstrap-CAgFI_Ph.css">
   </head>
 
   <body>
-    <!------------------------------>
-    <!-- Your HTML Layout go here -->
-    <!------------------------------>
-
-    <!-- our own navbar goes here -->
+    <!-- nav -->
     <site-navbar></site-navbar>
 
-    <!-- Main content goes here -->
+    <!-- auth container -->
     <div class="container py-5" style="max-width: 420px">
-      <!-- Alerts -->
-      <div id="authAlert" class="alert alert-danger d-none" role="alert"></div>
+      <!-- auth feedback -->
+      <div
+        id="authAlert"
+        class="alert alert-danger d-none"
+        role="alert"
+      ></div>
 
-      <!-- Signup -->
+      <!-- signup view -->
       <div id="signupView">
         <h3 class="mb-3 text-center">Sign Up</h3>
+
         <form id="signupForm" novalidate>
           <div class="mb-3">
             <input
@@ -42,40 +47,54 @@
               class="form-control"
               placeholder="First and Last Name"
               aria-label="Full name"
+              autocomplete="name"
               required
             />
           </div>
+
           <div class="mb-3">
             <input
               type="email"
               id="signupEmail"
               class="form-control"
               placeholder="Email"
+              autocomplete="email"
               required
             />
           </div>
+
           <div class="mb-3">
             <input
               type="password"
               id="signupPassword"
               class="form-control"
               placeholder="Password"
+              autocomplete="new-password"
               required
             />
           </div>
-          <button type="submit" class="btn btn-success w-100">
+
+          <button
+            type="submit"
+            class="btn btn-success w-100"
+          >
             Create Account
           </button>
         </form>
+
         <small class="d-block mt-3 text-center">
           Already have an account?
           <a href="#" id="toLogin">Login</a>
         </small>
       </div>
 
-      <!-- Login -->
-      <div id="loginView"  class="d-none">
+      <!-- login view (toggled in JS) -->
+      <div
+        id="loginView"
+        class="d-none"
+      >
         <h3 class="mb-3 text-center">Login</h3>
+
         <form id="loginForm" novalidate>
           <div class="mb-3">
             <input
@@ -83,36 +102,40 @@
               id="loginEmail"
               class="form-control"
               placeholder="Email"
+              autocomplete="email"
               required
             />
           </div>
+
           <div class="mb-3">
             <input
               type="password"
               id="loginPassword"
               class="form-control"
               placeholder="Password"
+              autocomplete="current-password"
               required
             />
           </div>
-          <button type="submit" class="btn btn-primary w-100">Login</button>
+
+          <button
+            type="submit"
+            class="btn btn-primary w-100"
+          >
+            Login
+          </button>
         </form>
+
         <small class="d-block mt-3 text-center">
           Don’t have an account?
           <a href="#" id="toSignup">Sign up</a>
         </small>
       </div>
-
     </div>
-    <!-- our own footer goes here -->
+
+    <!-- footer -->
     <site-footer></site-footer>
 
-    <!---------------------------------------------->
-    <!-- Your own JavaScript scripts go here      -->
-    <!---------------------------------------------->
-
-    <!-- Firebase and authentication related scripts -->
-    <!-- The order of loading matters -->
-
+    <!-- firebase + auth flow -->
   </body>
 </html>

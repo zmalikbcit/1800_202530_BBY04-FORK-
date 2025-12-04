@@ -1,4 +1,4 @@
-/* --------- oak / pantry palette --------- */
+/* palette + basic tokens for the whole app */
 :root {
   --oak-900: #3b2a24;
   --oak-800: #51352b;
@@ -6,99 +6,357 @@
   --oak-600: #82523b;
   --oak-500: #a26b4a;
   --oak-300: #d6b597;
-  --cream:  #f6efe7;
-  --ink:    #2a2320;
-  --muted:  #6b5e57;
-  --white:  #fff;
+  --cream: #f6efe7;
+  --ink: #2a2320;
+  --muted: #6b5e57;
+  --white: #fff;
   --radius: 14px;
 }
 
-/* reset */
-* { box-sizing: border-box; }
-html, body { height: 100%; }
+/* little reset so stuff looks consistent */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   line-height: 1.5;
   color: var(--ink);
   background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
-img { max-width: 100%; display: block; }
-.wrap { width: min(1000px, 92%); margin: 0 auto; }
+img {
+  max-width: 100%;
+  display: block;
+}
+.wrap {
+  width: min(1000px, 92%);
+  margin: 0 auto;
+}
 
-/* ---------- header ---------- */
-.topbar { 
+/* ---------- top nav bar ---------- */
+.topbar {
   position: sticky;
   top: 0;
   z-index: 1000;
-
-  background: var(--oak-800); 
-  color: var(--white); 
-  border-bottom: 4px solid var(--oak-600); 
+  background: var(--oak-800);
+  color: var(--white);
+  border-bottom: 4px solid var(--oak-600);
 }
 
-.topbar .wrap { display:flex; align-items:center; justify-content:space-between; padding:10px 0; }
-.brand { display:flex; align-items:center; gap:8px; font-weight:700; }
-
-.menu-btn { display:none; background:transparent; border:0; color:#fff; font-size:22px; padding:6px 10px; }
-.nav { display:flex; gap:16px; }
-.nav a, .nav .muted { color:#f4ede7; text-decoration:none; padding:6px 8px; border-radius:6px; font-weight:600; }
-.nav a:hover { background:rgba(255,255,255,.1); }
-.nav .active { background:var(--oak-600); }
-.nav .muted { opacity:.6; }
-
-/* ---------- hero ---------- */
-.hero { background: linear-gradient(#fff, #f6efe7 60%); border-bottom: 1px solid #eadfda; }
-.hero-grid { display:grid; gap:24px; align-items:center; grid-template-columns:1.1fr 1fr; padding:28px 0 34px; }
-.hero h1 { margin:0 0 8px; font-size:clamp(28px, 4.6vw, 44px); color:var(--oak-900); }
-.lead { color:var(--muted); margin:0 0 16px; }
-.cta { display:flex; gap:10px; flex-wrap:wrap; }
-.btn { display:inline-block; text-decoration:none; font-weight:700; padding:12px 16px; border-radius:999px; border:2px solid var(--oak-600); color:var(--oak-800); background:#fff; }
-.btn:hover { background:#fff7f0; }
-.btn.primary { background:var(--oak-500); border-color:var(--oak-500); color:#fff; }
-.btn.primary:hover { background:#b97a54; }
-
-.hero-illustration { display:flex; justify-content:center; }
-.board{ width:320px; height:220px; background:#fff; border:2px solid #e2d6cf; border-radius:var(--radius); position:relative; padding:12px; box-shadow:0 6px 16px rgba(0,0,0,.08);}
-.board .shelf{ position:absolute; left:12px; right:12px; top:92px; height:10px; background:var(--oak-500); }
-.board .jar{ width:42px; height:58px; background:#e9f0ff; border:2px solid #afc3ff; border-radius:8px 8px 6px 6px; position:absolute; top:26px; left:24px; }
-.board .box{ width:60px; height:44px; background:#ffe9c9; border:2px solid #e2c9a6; position:absolute; top:26px; left:92px; }
-.board .can{ width:38px; height:38px; background:#f2f2f2; border:2px solid #d6d6d6; border-radius:50%; position:absolute; top:26px; left:168px; }
-
-/* ---------- feature band ---------- */
-.band{ padding:28px 0 36px; }
-.band-grid{ background:#fff; border:2px solid #eadfda; border-radius:var(--radius); padding:18px; display:grid; gap:16px; grid-template-columns:1fr 1fr; }
-.band h2{ margin:0 0 6px; color:var(--oak-900); }
-.band p{ margin:0 0 10px; color:var(--ink); }
-.list{ margin:0; padding-left:18px; }
-.panel{ background:#faf6f2; border:2px solid #eadfda; border-radius:10px; padding:12px; }
-.panel .row{ height:12px; background:#e8dacd; margin:10px 0; border-radius:6px; }
-.panel .row.short{ width:70%; }
-
-@media (max-width:900px){
-  .hero-grid{ grid-template-columns:1fr; }
-  .band-grid{ grid-template-columns:1fr; }
-  .hero-illustration{ order:-1; }
+.topbar .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
 }
 
-/* ---------- testimonials ---------- */
-.testimonials{ padding:28px 0 40px; }
-.testimonials h3{ margin:0 0 12px; color:var(--oak-900); }
-.cards{ display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
-@media (max-width:900px){ .cards{ grid-template-columns:1fr 1fr; } }
-@media (max-width:580px){ .cards{ grid-template-columns:1fr; } }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
 
-.card{ background:#fff; border:2px solid #eadfda; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; } /* single, global definition */
-.photo{ aspect-ratio:3/4; background:#e9e1db; }
-.photo.a{ background-image:url("https://images.unsplash.com/photo-1544168190-79c17527004f?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?q=80&w=800&auto=format&fit=crop"); background-size:cover; background-position:center; }
-.photo.b{ background-image:url("https://images.unsplash.com/photo-1763403063428-10184adc7be3?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?q=80&w=800&auto=format&fit=crop"); background-size:cover; background-position:center; }
-.photo.c{ background-image:url("https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop"); background-size:cover; background-position:center; }
-.content{ padding:12px; }
-.content h4{ margin:0 0 6px; }
-.content p{ margin:0; color:var(--muted); }
-.foot{ padding:10px 12px 12px; color:var(--muted); font-size:14px; border-top:1px solid #eadfda; }
-.logo-image{ width:128px; height:auto; }
-/* ---------- Leave & Delete Group Buttons ---------- */
+.menu-btn {
+  display: none;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 22px;
+  padding: 6px 10px;
+}
+
+.nav {
+  display: flex;
+  gap: 16px;
+}
+
+.nav a,
+.nav .muted {
+  color: #f4ede7;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav .active {
+  background: var(--oak-600);
+}
+
+.nav .muted {
+  opacity: 0.6;
+}
+
+/* ---------- hero section on landing ---------- */
+.hero {
+  background: linear-gradient(#fff, #f6efe7 60%);
+  border-bottom: 1px solid #eadfda;
+}
+
+.hero-grid {
+  display: grid;
+  gap: 24px;
+  align-items: center;
+  grid-template-columns: 1.1fr 1fr;
+  padding: 28px 0 34px;
+}
+
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 4.6vw, 44px);
+  color: var(--oak-900);
+}
+
+.lead {
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.cta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* shared button look for the app */
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 2px solid var(--oak-600);
+  color: var(--oak-800);
+  background: #fff;
+}
+
+.btn:hover {
+  background: #fff7f0;
+}
+
+.btn.primary {
+  background: var(--oak-500);
+  border-color: var(--oak-500);
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: #b97a54;
+}
+
+/* little pantry illustration on landing */
+.hero-illustration {
+  display: flex;
+  justify-content: center;
+}
+
+.board {
+  width: 320px;
+  height: 220px;
+  background: #fff;
+  border: 2px solid #e2d6cf;
+  border-radius: var(--radius);
+  position: relative;
+  padding: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.board .shelf {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 92px;
+  height: 10px;
+  background: var(--oak-500);
+}
+
+.board .jar {
+  width: 42px;
+  height: 58px;
+  background: #e9f0ff;
+  border: 2px solid #afc3ff;
+  border-radius: 8px 8px 6px 6px;
+  position: absolute;
+  top: 26px;
+  left: 24px;
+}
+
+.board .box {
+  width: 60px;
+  height: 44px;
+  background: #ffe9c9;
+  border: 2px solid #e2c9a6;
+  position: absolute;
+  top: 26px;
+  left: 92px;
+}
+
+.board .can {
+  width: 38px;
+  height: 38px;
+  background: #f2f2f2;
+  border: 2px solid #d6d6d6;
+  border-radius: 50%;
+  position: absolute;
+  top: 26px;
+  left: 168px;
+}
+
+/* ---------- feature band under hero ---------- */
+.band {
+  padding: 28px 0 36px;
+}
+
+.band-grid {
+  background: #fff;
+  border: 2px solid #eadfda;
+  border-radius: var(--radius);
+  padding: 18px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.band h2 {
+  margin: 0 0 6px;
+  color: var(--oak-900);
+}
+
+.band p {
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+.list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* mini panel used in band */
+.panel {
+  background: #faf6f2;
+  border: 2px solid #eadfda;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.panel .row {
+  height: 12px;
+  background: #e8dacd;
+  margin: 10px 0;
+  border-radius: 6px;
+}
+
+.panel .row.short {
+  width: 70%;
+}
+
+/* layout tweaks on smaller screens */
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .band-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-illustration {
+    order: -1;
+  }
+}
+
+/* ---------- testimonials grid ---------- */
+.testimonials {
+  padding: 28px 0 40px;
+}
+
+.testimonials h3 {
+  margin: 0 0 12px;
+  color: var(--oak-900);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 580px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* shared card style, used here and in a few other spots */
+.card {
+  background: #fff;
+  border: 2px solid #eadfda;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.photo {
+  aspect-ratio: 3 / 4;
+  background: #e9e1db;
+  background-size: cover;
+  background-position: center;
+}
+
+/* testimonial avatars */
+.photo.a {
+  background-image: url("https://images.unsplash.com/photo-1544168190-79c17527004f?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?q=80&w=800&auto=format&fit=crop");
+}
+.photo.b {
+  background-image: url("https://images.unsplash.com/photo-1763403063428-10184adc7be3?q=80&w=627&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?q=80&w=800&auto=format&fit=crop");
+}
+.photo.c {
+  background-image: url("https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop");
+}
+
+.content {
+  padding: 12px;
+}
+
+.content h4 {
+  margin: 0 0 6px;
+}
+
+.content p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.foot {
+  padding: 10px 12px 12px;
+  color: var(--muted);
+  font-size: 14px;
+  border-top: 1px solid #eadfda;
+}
+
+.logo-image {
+  width: 128px;
+  height: auto;
+}
+
+/* ---------- leave / delete group buttons ---------- */
 #leaveBtn,
 #deleteBtn {
   display: inline-block;
@@ -111,15 +369,16 @@ img { max-width: 100%; display: block; }
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
   margin-left: 8px;
+  vertical-align: middle;
 }
 
-/* Leave button (secondary tone) */
+/* leave button styling */
 #leaveBtn:hover {
   background: #fff7f0;
   color: var(--oak-700);
 }
 
-/* Delete button (danger tone) */
+/* delete button pops a bit more */
 #deleteBtn {
   border-color: #b64c3a;
   color: #b64c3a;
@@ -129,46 +388,11 @@ img { max-width: 100%; display: block; }
   color: #fff;
 }
 
-/* Keep consistent alignment with Open Chat button */
-#openChatBtn,
-#leaveBtn,
-#deleteBtn {
-  vertical-align: middle;
-}
-
 /* -------------------------------------------------------
-   Group Chat – styled to match Pantry / Oak theme
+   Group Chat view (same colour vibes as the rest)
 ------------------------------------------------------- */
 
-:root {
-  --oak-900: #3b2a24;
-  --oak-800: #51352b;
-  --oak-600: #82523b;
-  --oak-500: #a26b4a;
-  --oak-300: #d6b597;
-  --cream:    #f6efe7;
-  --ink:      #2a2320;
-  --muted:    #6b5e57;
-  --white:    #fff;
-  --radius:   14px;
-}
-
-/* Basic resets */
-body {
-  margin: 0;
-  background: var(--cream);
-  color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-/* -------------------------------------------------------
-   Header bar (matches topbar)
-------------------------------------------------------- */
 #title_container {
-  /* background: var(--oak-800); */
   background: var(--oak-800);
   color: var(--white);
   border-bottom: 4px solid var(--oak-600);
@@ -183,7 +407,7 @@ body {
   letter-spacing: 1px;
 }
 
-/* --- Chat Container --- */
+/* chat box layout */
 #chat_container {
   flex: 1;
   display: flex;
@@ -213,10 +437,10 @@ body {
   gap: 12px;
 }
 
-/* --- Message Row (PFP + Bubble) --- */
+/* bubble row = avatar + message */
 .msg-row {
   display: flex;
-  align-items: flex-start; /* Align bubble top with PFP */
+  align-items: flex-start;
   gap: 10px;
 }
 
@@ -224,7 +448,7 @@ body {
   flex-direction: row-reverse;
 }
 
-/* Profile picture */
+/* avatar */
 .msg-pfp {
   width: 38px;
   height: 38px;
@@ -233,7 +457,7 @@ body {
   border: 2px solid var(--oak-300);
 }
 
-/* Wrapper for username, bubble, timestamp */
+/* stack username, bubble, time */
 .msg-wrapper {
   display: flex;
   flex-direction: column;
@@ -242,14 +466,13 @@ body {
 }
 
 .msg-wrapper.other {
-  align-items: flex-start; /* Left-align for others */
+  align-items: flex-start;
 }
 
 .msg-wrapper.you {
-  align-items: flex-end; /* Right-align for your messages */
+  align-items: flex-end;
 }
 
-/* Username */
 .msg-username {
   font-size: 13px;
   font-weight: 600;
@@ -257,7 +480,7 @@ body {
   color: var(--oak-700);
 }
 
-/* Message bubble */
+/* message bubble itself */
 .message {
   padding: 10px 14px;
   border-radius: 14px;
@@ -280,15 +503,12 @@ body {
   border-bottom-left-radius: 4px;
 }
 
-/* Timestamp */
 .msg-time {
   font-size: 11px;
   opacity: 0.65;
 }
 
-/* -------------------------------------------------------
-   Back button
-------------------------------------------------------- */
+/* back-to-group button strip */
 #chat_logout_container {
   padding: 12px;
   text-align: center;
@@ -311,7 +531,7 @@ body {
   background: #fff7f0;
 }
 
-/* --- Input Area --- */
+/* message input row */
 #chat_input_container {
   display: flex;
   gap: 8px;
@@ -347,7 +567,7 @@ body {
   background: var(--oak-600);
 }
 
-/* --- Scrollbar --- */
+/* chat scroll bar tweak */
 #chat_content_container::-webkit-scrollbar {
   width: 8px;
 }
@@ -361,32 +581,124 @@ body {
   background: #f0e8e0;
 }
 
+/* ---------- footer shared across pages ---------- */
+.footer {
+  border-top: 2px solid #eadfda;
+  background: #fff;
+}
 
-/* ---------- footer ---------- */
-.footer{ border-top:2px solid #eadfda; background:#fff; }
-.footer .wrap.small{ display:flex; justify-content:space-between; align-items:center; padding:14px 0; font-size:14px; }
-.footer a{ color:var(--oak-700); text-decoration:none; }
-.footer a:hover{ text-decoration:underline; }
+.footer .wrap.small {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  font-size: 14px;
+}
 
-.member-chip{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid #e5e7eb; border-radius:9999px; padding:.25rem .75rem; margin:.25rem; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.04); }
-.member-chip img{ width:28px; height:28px; border-radius:50%; object-fit:cover; }
-.meta{ color:#6b7280; font-size:.95rem; }
+.footer a {
+  color: var(--oak-700);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* little pill chips for members and groups */
+.member-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  margin: 0.25rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.member-chip img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.meta {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
 
 /* =========================================================
-   Pantry UI (scoped)  — avoids global .card duplication
-   ========================================================= */
-.pantry-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
-@media (min-width:1000px){ .pantry-grid{ grid-template-columns:1fr 1fr; } }
+   Pantry view (group page)
+========================================================= */
+.pantry-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
 
-.pantry-grid .card{ border:1px solid #e5e7eb; border-radius:.75rem; overflow:hidden; background:#fff; }
-.pantry-grid .card .card-body{ padding:1rem 1.25rem; }
-.pantry-grid .card + .card{ margin-top:1rem; }
+@media (min-width: 1000px) {
+  .pantry-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
-.pantry-inline-form{ display:grid; grid-template-columns:1.2fr 0.7fr 0.8fr auto; gap:8px; }
-@media (max-width:520px){ .pantry-inline-form{ grid-template-columns:1fr 1fr; } }
+/* scoped card styling so it plays nice with Bootstrap */
+.pantry-grid .card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+}
 
-.pantry-table th, .pantry-table td{ vertical-align:middle; }
+.pantry-grid .card .card-body {
+  padding: 1rem 1.25rem;
+}
 
-.grocery-list{ list-style:none; margin:0; padding:0; border-top:1px solid #e5e7eb; }
-.grocery-item{ display:grid; grid-template-columns:28px 1fr auto; gap:10px; align-items:center; border-bottom:1px solid #e5e7eb; padding:10px 6px; }
-.grocery-item .qty{ display:inline-block; padding:2px 8px; border:1px solid #e5e7eb; border-radius:999px; font-variant-numeric:tabular-nums; margin-left:.4rem; }
+.pantry-grid .card + .card {
+  margin-top: 1rem;
+}
+
+.pantry-inline-form {
+  display: grid;
+  grid-template-columns: 1.2fr 0.7fr 0.8fr auto;
+  gap: 8px;
+}
+
+@media (max-width: 520px) {
+  .pantry-inline-form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pantry-table th,
+.pantry-table td {
+  vertical-align: middle;
+}
+
+/* grocery checklist below the table */
+.grocery-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.grocery-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 6px;
+}
+
+.grocery-item .qty {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  margin-left: 0.4rem;
+}

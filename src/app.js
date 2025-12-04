@@ -1,12 +1,4 @@
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import "bootstrap";
-
-//--------------------------------------------------------------
-// If you have custom global styles, import them as well:
-//--------------------------------------------------------------
-// import "/src/styles/style.css";
+// we use app.js to manage all style and global imports 
 import "/src/styles/global.css";
 import "bootstrap";
-//--------------------------------------------------------------
-// Custom global JS code (shared with all pages)can go here.
-//--------------------------------------------------------------
+

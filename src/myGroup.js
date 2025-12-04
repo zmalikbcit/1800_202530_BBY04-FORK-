@@ -14,9 +14,7 @@ import {
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-/* =========================================================
-   State & small utilities
-   ========================================================= */
+/* ------------ helpers ------------ */
 const $ = (sel) => document.querySelector(sel);
 const setTxt = (sel, v) => {
   const el = $(sel);
@@ -27,7 +25,7 @@ const fmtTime = (ts) => {
     if (ts?.toDate) return ts.toDate().toLocaleString();
     if (typeof ts === "number") return new Date(ts).toLocaleString();
   } catch {
-    /* noop */
+    /* ignore */
   }
   return "";
 };
@@ -50,22 +48,17 @@ const state = {
   groupDoc: null,
   currentUser: null,
   isAdmin: false,
-
-  // uid -> latest profile data
-  memberProfileMap: new Map(),
-
-  // uid -> unsubscribe function (so we can stop listeners when members change)
-  memberProfileUnsubs: new Map(),
+  memberProfileMap: new Map(), // uid -> latest profile
+  memberProfileUnsubs: new Map(), // uid -> listener cleanup
 };
 
 const groupRef = () => doc(db, "groups", state.groupId);
 
-/* =========================================================
-   Firestore: load, defaults, pantry mutations
-   ========================================================= */
+/* ------------ Firestore: group + pantry ------------ */
 async function loadGroup() {
   const snap = await getDoc(groupRef());
   if (!snap.exists()) throw new Error("Group not found");
+
   state.groupDoc = { id: snap.id, ref: groupRef(), ...snap.data() };
   computeIsAdmin();
   return state.groupDoc;
@@ -90,9 +83,11 @@ const DEFAULT_PANTRY = {
   rice: { name: "Rice", amount: 2, unit: "kg", baseline: 1 },
 };
 
+// seed a basic pantry the first time
 async function ensurePantryDefaults() {
   const p = state.groupDoc?.pantry || {};
   if (Object.keys(p).length) return;
+
   await updateDoc(groupRef(), {
     pantry: DEFAULT_PANTRY,
     pantryUpdatedAt: serverTimestamp(),
@@ -100,20 +95,21 @@ async function ensurePantryDefaults() {
 }
 
 const pantry = () => state.groupDoc?.pantry || {};
+
 const upsertItem = (key, value) =>
   updateDoc(groupRef(), {
     [`pantry.${key}`]: value,
     pantryUpdatedAt: serverTimestamp(),
   });
+
 const deleteItem = (key) =>
   updateDoc(groupRef(), {
     [`pantry.${key}`]: deleteField(),
     pantryUpdatedAt: serverTimestamp(),
   });
 
-/* =========================================================
-   - This is what makes photo/name edits update instantly.
-   ========================================================= */
+/* ------------ live member profile sync ------------ */
+// keeps member chips in sync with profile edits
 function startRealtimeProfileListenersForMembers() {
   const users = Array.isArray(state.groupDoc?.users)
     ? state.groupDoc.users
@@ -121,21 +117,23 @@ function startRealtimeProfileListenersForMembers() {
 
   const currentUids = new Set(users.map((u) => u?.uid).filter(Boolean));
 
-  // 1) Stop listeners for users who left
+  // stop listeners for people who left
   for (const [uid, unsub] of state.memberProfileUnsubs.entries()) {
     if (!currentUids.has(uid)) {
-      try { unsub(); } catch {}
+      try {
+        unsub();
+      } catch {
+        /* ignore */
+      }
       state.memberProfileUnsubs.delete(uid);
       state.memberProfileMap.delete(uid);
     }
   }
 
-  // 2) Start listeners for new users
+  // add listeners for new people
   for (const uid of currentUids) {
     if (state.memberProfileUnsubs.has(uid)) continue;
 
-    // If you used Option B (publicUsers),
-    // change "users" -> "publicUsers" here:
     const uref = doc(db, "users", uid);
 
     const unsub = onSnapshot(
@@ -157,13 +155,13 @@ function startRealtimeProfileListenersForMembers() {
   }
 }
 
-/* =========================================================
-   Rendering: header, members, pantry, grocery
-   ========================================================= */
+/* ------------ rendering: header/members/pantry/grocery ------------ */
 function renderHeader() {
   const g = state.groupDoc || {};
+
   setTxt("#groupName", g.name || "Untitled Group");
   setTxt("#groupDescription", g.description || "No group description yet.");
+
   const meta = [
     `Privacy: ${g.privacy || "private"}`,
     `Owner: ${
@@ -176,6 +174,7 @@ function renderHeader() {
   ]
     .filter(Boolean)
     .join(" • ");
+
   setTxt("#groupMeta", meta);
 
   const img = $("#groupImage");
@@ -187,8 +186,10 @@ function renderHeader() {
 
   const panel = $("#adminPanel");
   if (panel) panel.classList[state.isAdmin ? "remove" : "add"]("d-none");
+
   const rename = $("#renameInput");
   if (rename) rename.value = g.name || "";
+
   const joinKey = $("#joinKeyInput");
   if (joinKey) joinKey.value = g.joinKey || state.groupId;
 }
@@ -197,6 +198,7 @@ function renderMembers() {
   const host = $("#memberChips");
   const tpl = $("#memberChipTemplate");
   if (!host || !tpl) return;
+
   host.innerHTML = "";
 
   (Array.isArray(state.groupDoc?.users) ? state.groupDoc.users : [])
@@ -209,7 +211,6 @@ function renderMembers() {
       const chip = tpl.content.cloneNode(true);
 
       const live = state.memberProfileMap.get(m.uid) || {};
-
       const displayName = live.displayName || m.displayName;
       const username = live.username || m.username;
       const email = live.email || m.email;
@@ -231,17 +232,20 @@ function renderMembers() {
       if (roleEl) roleEl.textContent = isOwner ? " • owner" : "";
 
       const removeBtn = chip.querySelector(".remove");
-      if (state.isAdmin && !isOwner)
+      if (state.isAdmin && !isOwner) {
         removeBtn.addEventListener("click", () =>
           onRemoveMember(m.uid, fallbackName)
         );
-      else removeBtn.remove();
+      } else {
+        removeBtn.remove();
+      }
 
       host.appendChild(chip);
     });
 
-  if (!host.children.length)
+  if (!host.children.length) {
     host.innerHTML = `<div class="meta">No members to show.</div>`;
+  }
 }
 
 function updateMembershipButtons() {
@@ -264,6 +268,7 @@ function updateMembershipButtons() {
   }
 }
 
+/* ------------ leave / delete group ------------ */
 async function onLeaveGroupClick() {
   if (!state.currentUser || !state.groupDoc) {
     alert("You must be signed in and have a group loaded to leave.");
@@ -294,7 +299,6 @@ async function onLeaveGroupClick() {
     state.groupDoc.users = nextUsers;
 
     startRealtimeProfileListenersForMembers();
-
     updateMembershipButtons();
   } catch (err) {
     console.error("Failed to leave group:", err);
@@ -317,19 +321,20 @@ async function onDeleteGroupClick() {
   }
 }
 
-/* ---------- Pantry & Grocery ---------- */
+/* ------------ grocery view derived from pantry ------------ */
 function groceryFrom(p) {
   return Object.entries(p)
     .reduce((acc, [key, v]) => {
-      const amt = +v?.amount || 0,
-        base = +v?.baseline || 0;
-      if (base > 0 && amt < base)
+      const amt = +v?.amount || 0;
+      const base = +v?.baseline || 0;
+      if (base > 0 && amt < base) {
         acc.push({
           key,
           name: v.name || key,
           need: Math.ceil(base - amt),
           unit: v.unit || "",
         });
+      }
       return acc;
     }, [])
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -338,6 +343,7 @@ function groceryFrom(p) {
 function renderPantry() {
   const tbody = $("#pantryTbody");
   if (!tbody) return;
+
   tbody.innerHTML = "";
 
   const p = pantry();
@@ -346,7 +352,8 @@ function renderPantry() {
   );
 
   if (!keys.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="meta">No items yet. Add something above.</td></tr>`;
+    tbody.innerHTML =
+      '<tr><td colspan="5" class="meta">No items yet. Add something above.</td></tr>';
     renderGrocery();
     return;
   }
@@ -406,14 +413,17 @@ function renderPantry() {
       b.addEventListener("click", cb);
       return b;
     };
+
     tdAct.append(
       mkBtn("–", "btn btn-outline-secondary me-1", () => onNudge(k, -1)),
       mkBtn("+", "btn btn-outline-secondary me-1", () => onNudge(k, +1))
     );
-    if (state.isAdmin)
+
+    if (state.isAdmin) {
       tdAct.append(
         mkBtn("Remove", "btn btn-outline-danger", () => onRemoveItem(k))
       );
+    }
 
     tr.append(tdName, tdAmount, tdUnit, tdBase, tdAct);
     tbody.appendChild(tr);
@@ -425,13 +435,15 @@ function renderPantry() {
 function renderGrocery() {
   const list = $("#groceryList");
   if (!list) return;
+
   list.innerHTML = "";
 
   const items = groceryFrom(pantry());
   if (!items.length) {
     const li = document.createElement("li");
     li.className = "grocery-item";
-    li.innerHTML = `<span></span><div>You're all stocked!</div><span></span>`;
+    li.innerHTML =
+      "<span></span><div>You're all stocked!</div><span></span>";
     list.appendChild(li);
     return;
   }
@@ -439,18 +451,22 @@ function renderGrocery() {
   items.forEach(({ key, name, need, unit }) => {
     const li = document.createElement("li");
     li.className = "grocery-item";
+
     const cb = document.createElement("input");
     cb.type = "checkbox";
+
     const label = document.createElement("div");
     label.innerHTML = `${name} <span class="qty">${need}${
       unit ? " " + unit : ""
     }</span>`;
+
     const dismiss = document.createElement("button");
     dismiss.className = "btn btn-outline-secondary";
     dismiss.textContent = "Dismiss";
     dismiss.addEventListener("click", () => {
       const it = pantry()[key];
       if (!it) return;
+
       const nextAmt = Math.max(+it.amount || 0, +it.baseline || 0);
       upsertItem(key, { ...it, amount: nextAmt }).then(renderPantry);
     });
@@ -460,18 +476,19 @@ function renderGrocery() {
   });
 }
 
-/* =========================================================
-   Pantry actions
-   ========================================================= */
+/* ------------ pantry actions ------------ */
 async function onAddItem(e) {
   e.preventDefault();
+
   const name = $("#addItemName").value.trim();
   const amount = Number($("#addItemAmount").value);
   const unit = ($("#addItemUnit").value || "").trim();
+
   if (!name || !Number.isFinite(amount) || amount < 0) return;
 
   const key = safeKey(name);
   const existing = pantry()[key];
+
   const next = existing
     ? {
         ...existing,
@@ -480,6 +497,7 @@ async function onAddItem(e) {
         amount: Math.max(0, Math.floor((existing.amount || 0) + amount)),
       }
     : { name, unit, amount: Math.floor(amount), baseline: 0 };
+
   await upsertItem(key, next);
 
   $("#addItemName").value = "";
@@ -491,6 +509,7 @@ async function onAddItem(e) {
 async function onUpdateAmount(key, newAmount) {
   const it = pantry()[key];
   if (!it) return alert("This item was removed by an admin.");
+
   await upsertItem(key, {
     ...it,
     amount: Math.max(
@@ -498,30 +517,36 @@ async function onUpdateAmount(key, newAmount) {
       Number.isFinite(newAmount) ? Math.floor(newAmount) : 0
     ),
   });
+
   renderPantry();
 }
 
 async function onNudge(key, delta) {
   const it = pantry()[key];
   if (!it) return alert("This item was removed by an admin.");
+
   await upsertItem(key, {
     ...it,
     amount: Math.max(0, Math.floor((it.amount || 0) + delta)),
   });
+
   renderPantry();
 }
 
 async function onUpdateUnit(key, unit) {
   const it = pantry()[key];
   if (!it) return alert("This item was removed by an admin.");
+
   await upsertItem(key, { ...it, unit: unit || "" });
   renderPantry();
 }
 
 async function onUpdateBaseline(key, baseline) {
   if (!state.isAdmin) return alert("Only the owner can change baselines.");
+
   const it = pantry()[key];
   if (!it) return;
+
   await upsertItem(key, {
     ...it,
     baseline: Math.max(
@@ -529,21 +554,22 @@ async function onUpdateBaseline(key, baseline) {
       Number.isFinite(baseline) ? Math.floor(baseline) : 0
     ),
   });
+
   renderPantry();
 }
 
 async function onRemoveItem(key) {
   if (!state.isAdmin) return alert("Only the group owner can remove items.");
   if (!confirm("Remove this item from the pantry?")) return;
+
   await deleteItem(key);
   renderPantry();
 }
 
-/* =========================================================
-   Admin actions (rename, join key, member removal)
-   ========================================================= */
+/* ------------ admin actions (rename/join key/members) ------------ */
 async function onRenameDisplayName() {
   if (!state.isAdmin) return alert("Only the owner can rename this group.");
+
   const newName = ($("#renameInput")?.value || "").trim();
   if (!newName) return alert("Please enter a group name.");
 
@@ -560,22 +586,27 @@ async function onRenameDisplayName() {
 
 async function onSaveJoinKey() {
   if (!state.isAdmin) return alert("Only the owner can change the join name.");
+
   const raw = ($("#joinKeyInput")?.value || "").trim();
   const newKey = slug(raw);
   if (!newKey) return alert("Join name is required.");
 
-  if (newKey === (state.groupDoc.joinKey || state.groupId))
+  if (newKey === (state.groupDoc.joinKey || state.groupId)) {
     return alert("Join name is unchanged.");
+  }
 
   try {
-    const q = query(
+    const qy = query(
       collection(db, "groups"),
       where("joinKey", "==", newKey),
       limit(1)
     );
-    const snap = await getDocs(q);
-    if (!snap.empty && snap.docs[0].id !== state.groupId)
+    const snap = await getDocs(qy);
+
+    if (!snap.empty && snap.docs[0].id !== state.groupId) {
       return alert("That join name is already taken.");
+    }
+
     await updateDoc(groupRef(), { joinKey: newKey });
     state.groupDoc.joinKey = newKey;
     renderHeader();
@@ -606,7 +637,6 @@ async function onRemoveMember(uid, displayName) {
     state.groupDoc.users = next;
 
     startRealtimeProfileListenersForMembers();
-
     renderMembers();
     alert("Member removed.");
   } catch (e) {
@@ -615,9 +645,7 @@ async function onRemoveMember(uid, displayName) {
   }
 }
 
-/* =========================================================
-   Wiring & init
-   ========================================================= */
+/* ------------ wiring + bootstrap ------------ */
 function wire() {
   $("#openChatBtn")?.addEventListener("click", () => {
     window.location.href = `/groupChat.html?docID=${encodeURIComponent(
@@ -632,17 +660,23 @@ function wire() {
   $("#saveJoinKeyBtn")?.addEventListener("click", onSaveJoinKey);
 
   $("#addPantryForm")?.addEventListener("submit", onAddItem);
-  $("#clearCheckedBtn")?.addEventListener("click", () =>
+  $("#clearCheckedBtn")?.addEventListener("click", () => {
     document
       .querySelectorAll("#groceryList input[type=checkbox]")
-      .forEach((cb) => (cb.checked = false))
-  );
+      .forEach((cb) => {
+        cb.checked = false;
+      });
+  });
 }
 
 async function start(user) {
   state.currentUser = user || null;
   state.groupId = new URL(location.href).searchParams.get("docID");
-  if (!state.groupId) return setTxt("#groupName", "Group not found");
+
+  if (!state.groupId) {
+    setTxt("#groupName", "Group not found");
+    return;
+  }
 
   try {
     await loadGroup();
@@ -655,6 +689,7 @@ async function start(user) {
     renderPantry();
     updateMembershipButtons();
 
+    // live updates for this group doc
     onSnapshot(groupRef(), async (snap) => {
       const hasPending = snap.metadata.hasPendingWrites;
       const data = snap.data() || null;
@@ -684,7 +719,6 @@ async function start(user) {
       }
 
       startRealtimeProfileListenersForMembers();
-
       renderHeader();
       renderMembers();
       renderPantry();
@@ -698,7 +732,5 @@ async function start(user) {
 
 document.addEventListener("DOMContentLoaded", () => {
   wire();
-  onAuthStateChanged(getAuth(), (user) => {
-    start(user);
-  });
+  onAuthStateChanged(getAuth(), (user) => start(user));
 });

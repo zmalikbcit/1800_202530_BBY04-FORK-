@@ -1,21 +1,23 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { getAuth,
-         setPersistence,
-         browserLocalPersistence,
-         browserSessionPersistence
- } from "firebase/auth";
+import {
+  getAuth,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey:             import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain:         import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId:          import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket:      import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId:  import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId:              import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId:      import.meta.env.VITE_FIREBASE_MEASUREMENT_ID, 
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId:     import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+// keep a single app instance
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 if (!firebaseConfig.projectId) {
@@ -25,10 +27,13 @@ if (!firebaseConfig.projectId) {
 }
 
 export const auth = getAuth(app);
-export const db   = getFirestore(app);
-export const apps = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 
-(async function setAuthPersistenceForEnv(){
+// if anything expects "apps", hand it the same app
+export const apps = app;
+
+// set auth persistence based on env (local vs session)
+(async function setAuthPersistenceForEnv() {
   try {
     const hostname = window.location.hostname;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
