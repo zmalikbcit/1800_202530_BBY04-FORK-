@@ -11,6 +11,32 @@ import {
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
+let ADMIN_UID = null;
+let GROUP_ADMINS = [];
+let IS_ADMIN = false;
+
+//load admin + admins[] from group doc
+async function loadGroupAdmin() {
+  const groupRef = doc(db, "groups", groupId);
+  const snap = await getDoc(groupRef);
+
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+  ADMIN_UID = data.ownerUid || null;
+  GROUP_ADMINS = Array.isArray(data.admins) ? data.admins : [];
+
+  // compute admin using same logic as myGroup.js file
+  const uid = state.currentUser?.uid;
+}
+
+let state = { currentUser: null };
+
+function computeIsAdmin() {
+  const uid = state.currentUser?.uid;
+  IS_ADMIN = !!(uid && (uid === ADMIN_UID || GROUP_ADMINS.includes(uid)));
+}
+
 // tiny selector helper
 const $ = (sel) => document.querySelector(sel);
 
@@ -62,6 +88,15 @@ function buildChatUI(username) {
             maxlength="500"
             placeholder="${username}, say something…"
           />
+          <div id="admin_image_container" style="display:none; margin-top:10px;">
+              <input 
+                type="text" 
+                id="imageUrlInput" 
+                placeholder="Paste image URL…" 
+                style="width:70%; padding:6px;"
+              >
+              <button id="sendImageUrlBtn">+</button>
+            </div>
           <button id="chat_input_send" disabled>Send</button>
         </div>
 
@@ -105,6 +140,16 @@ function renderMessages(msgList, currentUid) {
     bubble.textContent = m.text;
     wrapper.appendChild(bubble);
 
+    // IMAGE message
+    if (m.imageUrl) {
+      const imgEl = document.createElement("img");
+      imgEl.src = m.imageUrl;
+      imgEl.style.maxWidth = "250px";
+      imgEl.style.borderRadius = "10px";
+      imgEl.style.marginTop = "6px";
+      wrapper.appendChild(imgEl);
+    }
+
     const timeEl = document.createElement("div");
     timeEl.className = "msg-time";
     if (m.timestamp?.toDate) {
@@ -129,13 +174,25 @@ onAuthStateChanged(getAuth(), async (user) => {
     return;
   }
 
+  state.currentUser = user;
   const username = user.displayName || "User";
+
+  // load group admin info
+  await loadGroupAdmin();
+
+  // compute admin using same logic as your other admin page
+  computeIsAdmin();
 
   // pull avatar first
   await loadUserProfilePic(user.uid);
 
   // then draw UI
   buildChatUI(username);
+
+  if (IS_ADMIN) {
+    $("#admin_image_container").style.display = "block";
+  }
+
 
   $("#backBtn")?.addEventListener("click", () => {
     window.location.href = `/myGroup.html?docID=${groupId}`;
@@ -177,4 +234,32 @@ onAuthStateChanged(getAuth(), async (user) => {
     sendBtn.disabled = true;
     sendBtn.classList.remove("enabled");
   });
+
+  // SEND IMAGE URL (ADMIN ONLY)
+$("#sendImageUrlBtn")?.addEventListener("click", async () => {
+  if (!IS_ADMIN) {
+    alert("Only admins can send image messages.");
+    return;
+  }
+
+  const url = $("#imageUrlInput").value.trim();
+  if (!url) return;
+
+  try {
+    await addDoc(chatRef, {
+      user: username,
+      uid: user.uid,
+      imageUrl: url,
+      photoURL: currentUserPic,
+      timestamp: serverTimestamp(),
+    });
+
+    $("#imageUrlInput").value = "";
+  } catch (err) {
+    console.error("Error sending image message:", err);
+  }
 });
+
+
+});
+

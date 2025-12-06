@@ -581,6 +581,62 @@ img {
   background: #f0e8e0;
 }
 
+/* ===============================
+   Admin Image Sending UI (Chat)
+================================= */
+#admin_image_container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  border-top: 1px solid #eadfda;
+  background: #fdf9f5;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+#imageUrlInput {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d6c8bd;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+}
+
+#imageUrlInput:focus {
+  border-color: var(--oak-500);
+  box-shadow: 0 0 0 2px rgba(162, 107, 74, 0.2);
+}
+
+#sendImageUrlBtn {
+  background: var(--oak-500);
+  border: 2px solid var(--oak-500);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#sendImageUrlBtn:hover {
+  background: var(--oak-600);
+}
+
+#sendImageUrlBtn:active {
+  transform: scale(0.95);
+}
+
+/* ensure image previews inside chat bubble are consistent */
+.message img {
+  max-width: 250px;
+  border-radius: 10px;
+  margin-top: 6px;
+  display: block;
+}
+
+
 /* ---------- footer shared across pages ---------- */
 .footer {
   border-top: 2px solid #eadfda;
@@ -670,6 +726,82 @@ img {
   .pantry-inline-form {
     grid-template-columns: 1fr 1fr;
   }
+  /* ===============================
+   Responsive tweaks for Group Chat
+================================= */
+
+/* Make chat container fit smaller screens */
+#chat_container {
+  padding: 10px;
+  height: 100%;
+}
+
+#chat_inner_container {
+  width: 100%;
+  max-width: 820px;
+  height: 100%;
+}
+
+/* Chat input row stacking on small screens */
+@media (max-width: 600px) {
+  #chat_input_container {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  #chat_input {
+    width: 100%;
+  }
+
+  #chat_input_send {
+    width: 100%;
+  }
+
+  #admin_image_container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #imageUrlInput,
+  #sendImageUrlBtn {
+    width: 100%;
+  }
+
+  #chat_logout_container {
+    padding: 10px 6px;
+  }
+}
+
+/* Reduce bubble max width on small screens */
+@media (max-width: 480px) {
+  .msg-wrapper {
+    max-width: 90%;
+  }
+
+  .message img {
+    max-width: 100%;
+  }
+}
+
+/* Make chat scroll easier on mobile */
+#chat_content_container {
+  padding: 12px;
+}
+
+#chat_content_container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat_content_container::-webkit-scrollbar-thumb {
+  background: var(--oak-500);
+  border-radius: 6px;
+}
+
+#chat_content_container::-webkit-scrollbar-track {
+  background: #f0e8e0;
+}
+
+
 }
 
 .pantry-table th,
